@@ -7,7 +7,13 @@ var player=document.querySelector(".player");
 var isBird=false;
 let bird;
 let hydrant;
+let hydrantjumps=0;
+let birdducks=0;
 let count=0;
+let jumpsound=new Audio('./assets/jump.wav')
+let crashsound=new Audio('./assets/crash.wav')
+let clicksound=new Audio('./assets/click.wav')
+let squishsound=new Audio('./assets/squish.wav')
 let scoreDOM=document.querySelector(".score")
 
 var gameCanvas=document.querySelector(".game")
@@ -50,9 +56,15 @@ function animateJump(){
 function playerAction(){
 
     if(isBird){
-        animateDuck()}
+        animateDuck()
+        birdducks++;
+        clicksound.play()
+    }
+
     else{
         animateJump()
+        hydrantjumps++
+        jumpsound.play()
     }
 }
 
@@ -127,7 +139,7 @@ function determineObstacle(){
 
 
 
-function gameLoop(){
+function playerLoop(){
     if(determineObstacle() > .5){
         isBird=true;
          generateBird()
@@ -138,29 +150,30 @@ function gameLoop(){
     }
 
     setTimeout(()=>{
-        gameLoop()
+        playerLoop()
     },3000)
 }
 
 
-gameLoop()
+playerLoop()
+// gameLoop()
 
 
-// let cornDOM=document.querySelector(".cornfield")
+let cornDOM=document.querySelector(".cornfield")
 
-// let html="";
+let html="";
 
-// for(let i=0;i<5;i++){
-//     for(let j=0;j<15;j++){
-//         html+= `<div class='corn'></div>`
-//     }
-// }
-
-
-// cornDOM.innerHTML=html;
+for(let i=0;i<5;i++){
+    for(let j=0;j<8;j++){
+        html+= `<div class='corn'></div>`
+    }
+}
 
 
+cornDOM.innerHTML=html;
 
+
+// function gameLoop(){
 setInterval(()=>{
     let playerTop=parseInt(window.getComputedStyle(player).getPropertyValue('top'))
     // let playerTop=parseInt(window.getComputedStyle(player).getPropertyValue('top'))
@@ -170,8 +183,11 @@ setInterval(()=>{
     if(isBird){
         let birdLeft=parseInt(window.getComputedStyle(bird).getPropertyValue('left'))
         console.log("BIrd:" + birdLeft + " Player : " + playerTop)
-        if(birdLeft > 0 && birdLeft < 40 && playerTop < 275){
-            alert('you got hit!')
+        if(birdLeft > 20 && birdLeft < 60 && playerTop < 275){
+            crashsound.play()
+            bird.style.animation=""
+            alert(`You lost!! \n Your score was  ${count} \n
+             You jumped ${hydrantjumps === 0 ? hydrantjumps : hydrantjumps-1} hydrants and ducked ${birdducks === 0 ? birdducks : birdducks-1} birds!`)
         }
         else{
             count++
@@ -181,9 +197,12 @@ setInterval(()=>{
     else{
        // hydrantLeft > 0 && hydrantLeft < 35 && 
      let hydrantLeft=parseInt(window.getComputedStyle(hydrant).getPropertyValue('left'))
-     if (hydrantLeft > 0 && hydrantLeft < 40 && playerTop > 200){
+     if (hydrantLeft > 20 && hydrantLeft < 60 && playerTop > 200){
+         squishsound.play()
+            hydrant.style.animation=""
+         alert(`You lost!! \n Your score was  ${count} \n
+          You jumped ${hydrantjumps === 0 ? hydrantjumps : hydrantjumps-1} hydrants and ducked ${birdducks === 0 ? birdducks : birdducks-1} birds!`)
 
-         alert("you lost! " + playerTop)
      }
      else{
         count++

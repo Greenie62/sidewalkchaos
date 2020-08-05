@@ -14,6 +14,8 @@ let jumpsound=new Audio('./assets/jump.wav')
 let crashsound=new Audio('./assets/crash.wav')
 let clicksound=new Audio('./assets/click.wav')
 let squishsound=new Audio('./assets/squish.wav')
+let thundersound=new Audio('./assets/thunder.wav');
+let thunderLoop=false;
 let scoreDOM=document.querySelector(".score")
 
 var gameCanvas=document.querySelector(".game")
@@ -54,6 +56,7 @@ function animateJump(){
 // DOM Player function
 
 function playerAction(){
+    playThunder()
 
     if(isBird){
         animateDuck()
@@ -156,6 +159,7 @@ function playerLoop(){
 
 
 playerLoop()
+playThunder()
 // gameLoop()
 
 
@@ -210,6 +214,17 @@ setInterval(()=>{
     }
      }
 },10)
+
+
+function playThunder(){
+    if(thunderLoop){return;}
+    thundersound.play();
+    thunderLoop=true
+    
+
+
+    setTimeout(()=>{thunderLoop=false;playThunder},7000)
+}
 
 
 
